@@ -13,7 +13,7 @@ Snowflake data as native Python objects
 9099
 >>> 
 >>> mydata[5]
-{'C1': 37.4, 'C2': -129.3, 'C3': 0.003 }
+{'C1': 37.4, 'C2': -129.3, 'C3': 0.003}
 >>> 
 >>> mydata[5].C1
 37.4
