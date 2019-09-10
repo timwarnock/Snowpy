@@ -1,5 +1,5 @@
-# snow.py
-Easily access Snowflake data as Python objects
+# Snowpy
+Pythonic access to Snowflake data
 
 ```python
 >>> import Snow
