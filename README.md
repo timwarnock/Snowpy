@@ -2,8 +2,8 @@
 Pythonic access to Snowflake data
 
 ```python
->>> import Snow
->>> mydb = Snow.DB('MYDB')
+>>> import Snowpy
+>>> mydb = Snowpy.DB('MYDB')
 >>> mydata = mydb.Schema('MYSCHEMA').Table('mydata')
 >>> 
 >>> mydata.columns
