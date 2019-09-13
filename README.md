@@ -1,9 +1,28 @@
 # Snowpy
-Pythonic access to Snowflake data
-
+Pythonic access to Snowflake data. In other words, access Snowflake objects (schemas, tables, data) as local Python objects, e.g.,
 ```python
 >>> import Snowpy
+>>> table1 = Snowpy.devDB.myschema.table1
+>>> len(table1)
+9099
+>>> table1.columns
+['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
+>>> mydata[5].C1
+37.4
+```
+
+You can call SQL queries easily from a DB or schema.
+```python
+>>> Snowpy.devDB.query('select count(*) from myschema.table1').fetchall()
+[(9099,)]
 >>> 
+>>> myschema = Snowpy.devDB.myschema
+myschema.query('select count(*) from table1').fetchall()
+[(9099,)]
+```
+
+And in most cases you can slice and dice your Snowflake data as if it were local Python objects.
+```python
 >>> Snowpy.databases
 ['devDB', 'qaDB', 'prodDB']
 >>> 
@@ -46,5 +65,4 @@ Pythonic access to Snowflake data
 >>> ## or all in one line
 >>> Snowpy.devDB.myschema.test1[0::2].filter('C1 > 0').sum('C1')
 113286.5
-
 ```
