@@ -8,28 +8,29 @@ from collections import defaultdict
 config = configparser.ConfigParser()
 config.read('Snowpy.ini')
 
-
 _user_pw = {}
 _db_schema_conn_pool = defaultdict(dict)
 
+
 def connect(db):
-    _DATABASE  = db
-    _USER      = config[db]['user']
-    _ACCOUNT   = config[db]['account']
+    _DATABASE = db
+    _USER = config[db]['user']
+    _ACCOUNT = config[db]['account']
     _WAREHOUSE = config[db]['warehouse']
-    _SCHEMA    = config[db]['schema']
+    _SCHEMA = config[db]['schema']
     if _USER not in _user_pw:
         _user_pw[_USER] = getpass.getpass(f"Snowflake Password for {_USER}: ")
     _PASSWORD = _user_pw[_USER]
     conn = snowflake.connector.connect(
-      user=_USER,
-      password=_PASSWORD,
-      account=_ACCOUNT,
-      warehouse=_WAREHOUSE,
-      database=_DATABASE,
-      schema=_SCHEMA
+        user=_USER,
+        password=_PASSWORD,
+        account=_ACCOUNT,
+        warehouse=_WAREHOUSE,
+        database=_DATABASE,
+        schema=_SCHEMA
     )
     return conn
+
 
 def _get_conn_by_db_schema(db, schema):
     if db not in _db_schema_conn_pool or schema not in _db_schema_conn_pool[db]:
@@ -39,12 +40,8 @@ def _get_conn_by_db_schema(db, schema):
         _db_schema_conn_pool[db][schema] = conn
     return _db_schema_conn_pool[db][schema]
 
+
 def query(sql, params=None, db=None, schema=None):
-    '''
-        >>> Snowpy.query('select count(*) from table where c1 > 42').fetchall()
-        [(233,)]
-        >>> 
-    '''
     if db is None:
         db = config['DEFAULT']['database']
     if schema is None:
@@ -55,7 +52,6 @@ def query(sql, params=None, db=None, schema=None):
 
 def DB(dbname):
     return _DB(dbname)
-
 
 
 class _DB:
@@ -82,10 +78,10 @@ class _Schema:
     def Table(self, table):
         return _Table(self.db, self.schema, table)
 
+
 class _Table:
     def __init__(self, db, schema, table):
         self.db = db
         self.schema = schema
         self.table = table
         self.conn = _get_conn_by_db_schema(db, schema)
-
