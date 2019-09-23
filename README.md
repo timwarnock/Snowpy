@@ -2,34 +2,71 @@
 Pythonic access to Snowflake data. In other words, access Snowflake objects (schemas, tables, data) as local Python objects, e.g.,
 ```python
 >>> import Snowpy
->>> table1 = Snowpy.devDB.myschema.table1
+>>> table1 = Snowpy.dev.DB.myschema.table1
 >>> len(table1)
 9099
 >>> table1.columns
 ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
->>> mydata[5].C1
+>>> mydata[5]['C1']
 37.4
 ```
 
-You can call SQL queries easily from a DB or schema.
+## Connect to Snowflake
+Snowpy will use your snowsql config (e.g., ~/.snowsql/config), e.g.,
+```ini
+[connections.dev]
+accountname = dev.us-east-1.company
+username = TWARNOCK
+dbname = DB
+schemaname = USER_TWARNOCK
+warehousename = WH_L1
+rolename = SNOW_TWARNOCK_ROLE
+
+[connections.qa]
+accountname = qa.us-east-1.company
+username = TWARNOCK
+dbname = DB
+schemaname = USER_TWARNOCK
+warehousename = WH_L1
+rolename = SNOW_TWARNOCK_ROLE
+
+[connections.prod]
+accountname = prod.us-east-1.company
+username = TWARNOCK
+dbname = DB
+schemaname = USER_TWARNOCK
+warehousename = WH_L1
+rolename = SNOW_TWARNOCK_ROLE
+
+```
+
+*NOTE* do not store your user password in your snowsql config. Snowpy will prompt you for your password.
+
+## Usage
+
+You can call SQL queries easily from a profile, a DB, or a schema.
 ```python
->>> Snowpy.devDB.query('select count(*) from myschema.table1').fetchall()
+>>> Snowpy.dev.query('select count(*) from DB.myschema.table1').fetchall()
 [(9099,)]
 >>> 
->>> myschema = Snowpy.devDB.myschema
+>>> Snowpy.dev.DB.query('select count(*) from myschema.table1').fetchall()
+[(9099,)]
+>>> 
+>>> myschema = Snowpy.dev.DB.myschema
 myschema.query('select count(*) from table1').fetchall()
 [(9099,)]
 ```
 
-And in most cases you can slice and dice your Snowflake data as if it were local Python objects.
+And you can slice and dice your Snowflake data as if it were local Python objects.
 ```python
->>> Snowpy.databases
-['devDB', 'qaDB', 'prodDB']
+>>> Snowpy.connections
+['dev', 'qa', 'prod']
 >>> 
->>> devDB = Snowpy.devDB
->>> devDB.schemas
+>>> dev = Snowpy.dev.databases
+['DB', 'SB']
+>>> dev.SB.schemas
 ['myschema', 'otherschema']
->>> myschema = devDB.myschema
+>>> myschema = dev.SB.myschema
 >>> myschema.tables
 ['table1', 'table2']
 >>> 
@@ -48,21 +85,19 @@ And in most cases you can slice and dice your Snowflake data as if it were local
 >>> mydata[5]
 {'C1': 37.4, 'C2': -129.3, 'C3': 0.003}
 >>> 
->>> mydata[5].C1
+>>> mydata[5]['C1']
 37.4
 >>> 
->>> everyother = mydata[0::2]
->>> len(everyother)
-4550
 >>> 
->>> everyother.sum('C1')
+>>> mydata.sum('C1')
 3249.12
 >>> 
->>> everyother_gt0 = everyother.filter("C1 > 0")
->>> everyother_gt0.sum('C1')
+>>> gt0 = mydata.filter("C1 > 0")
+>>> gt0.sum('C1')
 113286.5
 >>> 
 >>> ## or all in one line
->>> Snowpy.devDB.myschema.test1[0::2].filter('C1 > 0').sum('C1')
+>>> Snowpy.dev.SB.myschema.filter('C1 > 0').sum('C1')
 113286.5
 ```
+
