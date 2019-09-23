@@ -1,4 +1,5 @@
 # Snowpy
+**PROOF OF CONCEPT**
 Pythonic access to Snowflake data. In other words, access Snowflake objects (schemas, tables, data) as local Python objects, e.g.,
 ```python
 >>> import Snowpy
@@ -40,11 +41,11 @@ rolename = SNOW_TWARNOCK_ROLE
 
 ```
 
-*NOTE* do not store your user password in your snowsql config. Snowpy will prompt you for your password.
+Do **NOT** store your user password in your snowsql config. Snowpy will prompt you for your password.
 
 ## Usage
 
-You can call SQL queries easily from a profile, a DB, or a schema.
+You can call SQL queries easily from a profile, a DB, or a schema object (and it will map intuitively to a Snowflake DB and Schema).
 ```python
 >>> Snowpy.dev.query('select count(*) from DB.myschema.table1').fetchall()
 [(9099,)]
@@ -57,7 +58,7 @@ myschema.query('select count(*) from table1').fetchall()
 [(9099,)]
 ```
 
-And you can slice and dice your Snowflake data as if it were local Python objects.
+And you can slice and dice Snowflake data as if it were local Python objects.
 ```python
 >>> Snowpy.connections
 ['dev', 'qa', 'prod']
